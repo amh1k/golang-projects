@@ -10,22 +10,8 @@ import (
 	"testing"
 )
 
-type StubPlayerStore struct {
-	scores map[string]int
-	winCalls []string
-	league []Player
-}
-func(s *StubPlayerStore)GetPlayerScore(name string) int{
-	score := s.scores[name]
-	return score
-	
-}
-func (s *StubPlayerStore) RecordWin(name string) {
-	s.winCalls = append(s.winCalls, name)
-}
-func (s *StubPlayerStore) GetLeague() League {
-	return s.league
-}
+
+
 func TestGETPlayers(t *testing.T) {
 	
 	store := StubPlayerStore {
@@ -73,11 +59,11 @@ func TestStoreWins(t *testing.T) {
 		response := httptest.NewRecorder()
 		server.ServeHTTP(response, request)
 		assertStatus(t, response.Code, http.StatusAccepted)
-		if len(store.winCalls) !=1 {
-			t.Errorf("got %d calls to RecordWin want %d", len(store.winCalls), 1)
+		if len(store.WinCalls) !=1 {
+			t.Errorf("got %d calls to RecordWin want %d", len(store.WinCalls), 1)
 		}
-		if store.winCalls[0] != player {
-			t.Errorf("did not store correct winner got %q want %q", store.winCalls[0], player)
+		if store.WinCalls[0] != player {
+			t.Errorf("did not store correct winner got %q want %q", store.WinCalls[0], player)
 		}
 	})
 }
@@ -162,16 +148,5 @@ func assertStatus(t testing.TB, got, want int) {
 	t.Helper()
 	if got != want {
 		t.Errorf("did not get correct status, got %d, want %d", got, want)
-	}
-}
-func assertPlayerWin(t testing.TB, store *StubPlayerStore, winner string) {
-	t.Helper()
-
-	if len(store.winCalls) != 1 {
-		t.Fatalf("got %d calls to RecordWin want %d", len(store.winCalls), 1)
-	}
-
-	if store.winCalls[0] != winner {
-		t.Errorf("did not store correct winner got %q want %q", store.winCalls[0], winner)
 	}
 }
