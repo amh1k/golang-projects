@@ -23,7 +23,7 @@ func(s *StubPlayerStore)GetPlayerScore(name string) int{
 func (s *StubPlayerStore) RecordWin(name string) {
 	s.winCalls = append(s.winCalls, name)
 }
-func (s *StubPlayerStore) GetLeague() []Player {
+func (s *StubPlayerStore) GetLeague() League {
 	return s.league
 }
 func TestGETPlayers(t *testing.T) {
@@ -34,7 +34,7 @@ func TestGETPlayers(t *testing.T) {
 			"Floyd" : 10,
 		},
 		[] string{},
-		[]Player{},
+		League{},
 
 	}
 	server := NewPlayerServer(&store)

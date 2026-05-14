@@ -3,15 +3,26 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 )
-
+const dbFileName = "game.db.json"
 // func (i *InMemoryPlayerStore)GetPlayerScore(name string)int{
 // 	return 123
 // }
 // func (i *InMemoryPlayerStore) RecordWin(name string) {}
 func main() {
-	server := NewPlayerServer(NewInMemoryPlayerStore())
-	log.Fatal(http.ListenAndServe(":5000", server))
+	db, err := os.OpenFile(dbFileName, os.O_RDWR|os.O_CREATE, 0666)
+	if err != nil {
+		log.Fatalf("problem opening %s %v", dbFileName, err)
+	}
+	store, err := NewFileSystemPlayerStore(db)
+	if err != nil {
+	log.Fatalf("problem creating file system player store, %v ", err)
+}
+	server := NewPlayerServer(store)
+	if err := http.ListenAndServe(":5000", server); err != nil {
+		log.Fatalf("could not listen on port 5000 %v", err)
+	}
 	//http.HandlerFunc is basically a type which is converting PlayerServer to a function recognized by http.ListenAndServer
 	// We are basically type casting
 	
